@@ -2,6 +2,8 @@
 
 This application utilizes a custom-made csv file to analyze roughly 700k entries scraped from Craigslist cars+trucks data.
 
+Download the csv [here](https://files.fm/u/g3jywaty)
+
 ## What's in the Data?
 
 craigslistVehicles.csv contains the following columns:
