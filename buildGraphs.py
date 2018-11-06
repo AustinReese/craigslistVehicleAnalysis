@@ -50,6 +50,17 @@ def buildHeatmap(data):
     heatArr = data[["lat", "long"]].as_matrix()
     carMap.add_child(plugins.HeatMap(heatArr, radius=15))
     carMap.save("carMap.html")
+    
+def genericBarGraph(data, categorical, floating):
+    uniqueCategorical = data[categorical].value_counts()
+    uniqueList = []
+    floatingMedians = []
+    for i in uniqueCategorical.iteritems():
+        uniqueList.append(i[0])
+        floatingMedians.append(data[floating][data[categorical].values == i[0]].median())
+    plt.bar(uniqueList, floatingMedians)
+    plt.show()
+    
 
 def main():
     data = createDataset()
@@ -58,7 +69,9 @@ def main():
         return
     data = cleanData(data)
     #linePlotOdomPrice(data)
-    buildHeatmap(data)
+    #buildHeatmap(data)
+    genericBarGraph(data, "type", "odometer")
+    print(data.dtypes)
     
 if __name__ == "__main__":
     main()
