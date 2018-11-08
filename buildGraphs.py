@@ -1,20 +1,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os.path
-import webbrowser 
 import folium
 from folium import plugins
+from flask import make_response
 
-
-def createDataset():
-    exists = os.path.isfile("craigslistVehicles.csv")
-    if not exists:
-        print("Please download craigslistVehicles.csv and run this program again")
-        webbrowser.open("https://www.kaggle.com/austinreese/craigslist-carstrucks-data", new=2)
-        print("If you weren't redirected to the page, you can find it here: https://www.kaggle.com/austinreese/craigslist-carstrucks-data")
-        return None
-    return pd.read_csv("craigslistVehicles.csv")
 
 def cleanData(data):
     data.price = data.price[~((data.price-data.price.mean()).abs() > .05*data.price.std())]
@@ -49,9 +39,11 @@ def buildHeatmap(data):
     carMap = folium.Map(location = [41, -96], zoom_start=4)
     heatArr = data[["lat", "long"]].as_matrix()
     carMap.add_child(plugins.HeatMap(heatArr, radius=15))
-    carMap.save("carMap.html")
+    carMap.save("/templates/carMap.html")
     
-def genericBarGraph(data, categorical, floating):
+def genericBarGraph(data, form):
+    categorical = form.catDropdown.data
+    floating = form.fltDropdown.data
     uniqueCategorical = data[categorical].value_counts()
     uniqueList = []
     floatingMedians = []
@@ -61,17 +53,3 @@ def genericBarGraph(data, categorical, floating):
     plt.bar(uniqueList, floatingMedians)
     plt.show()
     
-
-def main():
-    data = createDataset()
-    NoneType = type(None)
-    if type(data) == NoneType:
-        return
-    data = cleanData(data)
-    #linePlotOdomPrice(data)
-    #buildHeatmap(data)
-    genericBarGraph(data, "type", "odometer")
-    print(data.dtypes)
-    
-if __name__ == "__main__":
-    main()
