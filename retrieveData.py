@@ -18,16 +18,23 @@ def createDataset():
     exists = os.path.isfile("craigslistVehicles.csv")
     if not exists:
         return None
-    return pd.read_csv("craigslistVehicles.csv")
+    data = pd.read_csv("craigslistVehicles.csv")
+    return cleanData(data)
+    
+def cleanData(data):
+    data.price = data.price[~((data.price-data.price.mean()).abs() > .05*data.price.std())]
+    data.odometer = data.odometer[~((data.odometer-data.odometer.mean()).abs() > 3*data.odometer.std())]
+    data.year = data.year[~((data.year-data.year.mean()).abs() > 10*data.year.std())]
+    return data
 
 class getLineGraphCriteria(FlaskForm):
     ctg = []
     flt = []
     categorical.remove("city")
+    categorical.remove("make")
     categorical.append("year")
     floaters.remove("lat")
     floaters.remove("long")
-    floaters.remove("year")
     
     for i in categorical:
         ctg.append((i, i.title()))

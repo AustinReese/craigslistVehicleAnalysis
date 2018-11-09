@@ -7,6 +7,7 @@ import buildGraphs
 import retrieveData
 
 app = Flask(__name__)
+# so very secret...
 app.config['SECRET_KEY'] = "CraigsistFilter"
 bootstrap = Bootstrap(app)
 
@@ -20,12 +21,13 @@ def index():
 def lineGraphs():
     form = retrieveData.getLineGraphCriteria()
     if form.is_submitted():
-        print("WELL THIS RUNS")
-        graph = buildGraphs.genericBarGraph(data, form)
-    return render_template("lineGraphs.html", form = form)
+        img = buildGraphs.genericBarGraph(data, form)
+        return render_template("lineGraphs.html", form = form, img = img)
+    return render_template("lineGraphs.html", form = form, img = None)
 
 @app.route("/heatMap")
 def heatMap():
+    buildGraphs.buildHeatmap(data)
     return render_template("carMap.html")
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
 *.zip
 *.csv
+templates/carMap.html
+static/*.png
 __pycache__/*
