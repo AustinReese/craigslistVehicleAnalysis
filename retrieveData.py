@@ -6,12 +6,12 @@ from wtforms import Form, SelectField, validators
 from wtforms.validators import Length, ValidationError, DataRequired
 
 categorical = [
-    "city", "manufacturer", "make", "condition", "cylinders", "fuel",
+    "manufacturer", "condition", "cylinders", "fuel", "year",
     "title_status", "transmission", "drive", "size", "type", "paint_color"
 ]   
 
 floaters = [
-    "price", "year", "odometer", "lat", "long"
+    "price", "year", "odometer"
 ]
 
 def createDataset():
@@ -27,14 +27,9 @@ def cleanData(data):
     data.year = data.year[~((data.year-data.year.mean()).abs() > 10*data.year.std())]
     return data
 
-class getLineGraphCriteria(FlaskForm):
+class getBarGraphCriteria(FlaskForm):
     ctg = []
     flt = []
-    categorical.remove("city")
-    categorical.remove("make")
-    categorical.append("year")
-    floaters.remove("lat")
-    floaters.remove("long")
     
     for i in categorical:
         ctg.append((i, i.title()))
@@ -42,5 +37,17 @@ class getLineGraphCriteria(FlaskForm):
         flt.append((i, i.title()))
     
     catDropdown = SelectField("Category", choices = ctg)
-    fltDropdown = SelectField("Numeric Value", choices = flt)   
-        
+    fltDropdown = SelectField("Numeric Value", choices = flt)
+
+class getLineGraphCriteria(FlaskForm):
+    ctg = []
+    flt = []
+    
+    for i in categorical:
+        ctg.append((i, i.title()))
+    for i in floaters:
+        flt.append((i, i.title()))
+    
+    cat = SelectField("Category", choices = ctg)
+    fltOne = SelectField("X Axis", choices = flt)
+    fltTwo = SelectField("Y Axis", choices = flt)

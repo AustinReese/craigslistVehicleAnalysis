@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib
+#multithreading to prevent crashes
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os.path
@@ -9,28 +10,37 @@ import operator
 from folium import plugins
 from flask import make_response
 
-def linePlotOdomPrice(data):
-    #data.plot.scatter(x="price", y="odometer", c="Red")
-    data.odometer = data.odometer.round(decimals=-3)
-    medianPrice = data.groupby("odometer")["price"].median()
-    medianPriceRolling = medianPrice.rolling(75).mean()
-    odometers = medianPriceRolling.index.values
-    prices = medianPriceRolling.values
+def lineGraphAvg(data, form):
+    x = form.fltOne.data
+    y = form.fltTwo.data
+    cat = form.cat.data
+    fileName = "static/{}+{}+{}+line.png".format(x, y, cat)    
+    exists = os.path.isfile(fileName)
+    if exists:
+        return fileName
+    data[x] = data[x].round(decimals=-3)
+    data[y] = data[y].round(decimals=-3)
+    medianY = data.groupby(x)[y].median()
+    medianYRolling = medianY.rolling(75).mean()
+    xData = medianYRolling.index.values
+    yData = medianYRolling.values
     fig, ax = plt.subplots(figsize = (16, 16))
-    ax.set_title("Price and Odometer Reading")
-    ax.set_ylabel("Price (In Dollars)")
-    ax.set_xlabel("Odometer (In Miles)")
-    ax.plot(odometers, prices, label="All Types")
-    types = data.type.value_counts()
-    for i in types.iteritems():
-        typeData = data[data.type.values == i[0]]
-        medianPrice = typeData.groupby("odometer")["price"].median()
-        medianPriceRolling = medianPrice.rolling(75).mean()
-        odometers = medianPriceRolling.index.values
-        prices = medianPriceRolling.values
-        ax.plot(odometers, prices, label=i[0])
+    ax.set_title("{} and {}".format(x.title(), y.title()))
+    ax.set_ylabel(y)
+    ax.set_xlabel(x)
+    ax.plot(xData, yData, label="All {}s".format(cat))
+    catValues = data[cat].value_counts()
+    for i in catValues.iteritems():
+        catData = data[data[cat].values == i[0]]
+        medianY = catData.groupby(x)[y].median()
+        medianYRolling = medianY.rolling(25).mean()
+        xData = medianYRolling.index.values
+        yData = medianYRolling.values
+        ax.plot(xData, yData, label=i[0])
     ax.legend(loc="upper left")
-    plt.show()
+    plt.savefig(fileName)
+    return fileName
+
     
 def buildHeatmap(data):
     exists = os.path.isfile("templates/carMap.html")
@@ -45,7 +55,7 @@ def buildHeatmap(data):
 def genericBarGraph(data, form):
     categorical = form.catDropdown.data
     floating = form.fltDropdown.data
-    fileName = "static/{}+{}".format(categorical, floating)
+    fileName = "static/{}+{}+bar".format(categorical, floating)
     exists = os.path.isfile(fileName + ".png")
     if exists:
         return fileName + ".png"
@@ -79,4 +89,4 @@ def scratch():
     data = createDataset()
     import seaborn as sns
     sns.set(style="whitegrid")
-    ax = sns.violinplot(x=data.price)    
+    ax = sns.violinplot(x=data.price)

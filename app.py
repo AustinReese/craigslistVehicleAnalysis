@@ -8,7 +8,7 @@ import retrieveData
 
 app = Flask(__name__)
 # so very secret...
-app.config['SECRET_KEY'] = "CraigsistFilter"
+app.config['SECRET_KEY'] = "CraigsistCars+TrucksVisualization"
 bootstrap = Bootstrap(app)
 
 data = retrieveData.createDataset()
@@ -17,11 +17,19 @@ data = retrieveData.createDataset()
 def index():
     return render_template("index.html")
 
+@app.route("/barGraphs", methods=["GET", "POST"])
+def barGraphs():
+    form = retrieveData.getBarGraphCriteria()
+    if form.is_submitted():
+        img = buildGraphs.genericBarGraph(data, form)
+        return render_template("barGraphs.html", form = form, img = img)
+    return render_template("barGraphs.html", form = form, img = None)
+
 @app.route("/lineGraphs", methods=["GET", "POST"])
 def lineGraphs():
     form = retrieveData.getLineGraphCriteria()
     if form.is_submitted():
-        img = buildGraphs.genericBarGraph(data, form)
+        img = buildGraphs.lineGraphAvg(data, form)
         return render_template("lineGraphs.html", form = form, img = img)
     return render_template("lineGraphs.html", form = form, img = None)
 
