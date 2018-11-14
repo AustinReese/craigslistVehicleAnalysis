@@ -18,27 +18,34 @@ def lineGraphAvg(data, form):
     exists = os.path.isfile(fileName)
     if exists:
         return fileName
-    data[x] = data[x].round(decimals=-3)
-    data[y] = data[y].round(decimals=-3)
+    if x != "year":
+        data[x] = data[x].round(decimals=-3)
+    if y != "year":
+        data[y] = data[y].round(decimals=-3)
     medianY = data.groupby(x)[y].median()
-    medianYRolling = medianY.rolling(75).mean()
+    medianYRolling = medianY.rolling(25).mean()
     xData = medianYRolling.index.values
     yData = medianYRolling.values
     fig, ax = plt.subplots(figsize = (16, 16))
-    ax.set_title("{} and {}".format(x.title(), y.title()))
     ax.set_ylabel(y)
     ax.set_xlabel(x)
-    ax.plot(xData, yData, label="All {}s".format(cat))
-    catValues = data[cat].value_counts()
-    for i in catValues.iteritems():
-        catData = data[data[cat].values == i[0]]
-        medianY = catData.groupby(x)[y].median()
-        medianYRolling = medianY.rolling(25).mean()
-        xData = medianYRolling.index.values
-        yData = medianYRolling.values
-        ax.plot(xData, yData, label=i[0])
-    ax.legend(loc="upper left")
+    if cat != "no_category":
+        ax.set_title("{} and {} by {}".format(x.title(), y.title(), cat.title()))        
+        ax.plot(xData, yData, label="All {}s".format(cat))        
+        catValues = data[cat].value_counts()
+        for i in catValues.iteritems():
+            catData = data[data[cat].values == i[0]]
+            medianY = catData.groupby(x)[y].median()
+            medianYRolling = medianY.rolling(25).mean()
+            xData = medianYRolling.index.values
+            yData = medianYRolling.values
+            ax.plot(xData, yData, label=i[0])
+        ax.legend(loc="upper left")
+    else:
+        ax.set_title("{} and {}".format(x.title(), y.title()))
+        ax.plot(xData, yData)                
     plt.savefig(fileName)
+    plt.clf()    
     return fileName
 
     
@@ -64,13 +71,13 @@ def genericBarGraph(data, form):
     floatingMedians = []
     sortingDict = {}
     for i in uniqueCategorical.iteritems():
-        sortingDict[i[0]] = data[floating][data[categorical].values == i[0]].median()
+        sortingDict[i[0]] = data[floating][data[categorical].values == i[0]].mean()
     sortedItems = sorted(sortingDict.items(), key=operator.itemgetter(1))
     for i in reversed(sortedItems):
         uniqueList.append(i[0])
         floatingMedians.append(i[1])
     plt.bar(uniqueList, floatingMedians)
-    if categorical == "manufacturer":
+    if categorical == "manufacturer" or categorical == "type":
         plt.xticks(rotation=90)
     if floating == "year":
         axes = plt.gca()

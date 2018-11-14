@@ -40,14 +40,14 @@ class getBarGraphCriteria(FlaskForm):
     fltDropdown = SelectField("Numeric Value", choices = flt)
 
 class getLineGraphCriteria(FlaskForm):
-    ctg = []
+    ctg = [("no_category", "No Category")]
     flt = []
     
     for i in categorical:
         ctg.append((i, i.title()))
     for i in floaters:
         flt.append((i, i.title()))
-    
     cat = SelectField("Category", choices = ctg)
     fltOne = SelectField("X Axis", choices = flt)
     fltTwo = SelectField("Y Axis", choices = flt)
+    
