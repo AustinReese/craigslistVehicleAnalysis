@@ -33,6 +33,14 @@ def lineGraphs():
         return render_template("lineGraphs.html", form = form, img = img)
     return render_template("lineGraphs.html", form = form, img = None)
 
+@app.route("/pieCharts", methods=["GET", "POST"])
+def pieCharts():
+    form = retrieveData.getPieChartCriteria()
+    if form.is_submitted():
+        img = buildGraphs.pieCharts(data, form)
+        return render_template("pieCharts.html", form = form, img = img)
+    return render_template("pieCharts.html", form = form, img = None)
+
 @app.route("/heatMap")
 def heatMap():
     buildGraphs.buildHeatmap(data)

@@ -51,3 +51,9 @@ class getLineGraphCriteria(FlaskForm):
     fltOne = SelectField("X Axis", choices = flt)
     fltTwo = SelectField("Y Axis", choices = flt)
     
+class getPieChartCriteria(FlaskForm):
+    ctg = []
+    for i in categorical:
+        ctg.append((i, i.title()))
+    
+    cat = SelectField("Category", choices = ctg)

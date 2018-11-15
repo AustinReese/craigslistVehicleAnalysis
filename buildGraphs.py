@@ -9,6 +9,7 @@ import folium
 import operator
 from folium import plugins
 from flask import make_response
+from retrieveData import createDataset
 
 def lineGraphAvg(data, form):
     x = form.fltOne.data
@@ -48,24 +49,47 @@ def lineGraphAvg(data, form):
     plt.clf()    
     return fileName
 
-    
-def buildHeatmap(data):
-    exists = os.path.isfile("templates/carMap.html")
+def pieCharts(data, form):
+    cat = form.cat.data
+    fileName = "static/{}+pie.png".format(cat)
+    exists = os.path.isfile(fileName)
     if exists:
-        return
-    data = data[np.isfinite(data["lat"])]
-    carMap = folium.Map(location = [41, -96], zoom_start=4)
-    heatArr = data[["lat", "long"]].as_matrix()
-    carMap.add_child(plugins.HeatMap(heatArr, radius=15))
-    carMap.save("templates/carMap.html")
-    
+        return fileName
+    catValues = data[cat].value_counts()
+    catCounts = []
+    catStrVals = []
+    if cat == "year":
+        base = 1900
+        for i in range(12):
+            i = i * 10
+            catStrVals.append("{} - {}".format(str(base + i), str(base + i + 9)))
+            catCounts.append(data[data["year"].between(base + i, base + i + 9, inclusive = True)]["year"].count())
+    else:
+        sumVals = data[cat].count()        
+        for i in catValues.iteritems():
+            catStrVals.append("{} - {:.3%}".format(i[0], i[1] / sumVals)) 
+            catCounts.append(i[1])
+    fig, ax = plt.subplots(figsize=(16, 16))
+    colors = reversed(["indianred", "red", "orangered", "chocolate", "saddlebrown",
+              "orange", "gold", "yellow", "yellowgreen", "greenyellow", "limegreen",
+              "mediumseagreen", "mediumaquamarine", "turquoise", "deepskyblue", "dodgerblue",
+              "royalblue", "darkblue", "mediumpurple", "darkviolet", "purple", "mediumvioletred",
+              "crimson"])
+    print("we go")
+    patches, texts = ax.pie(catCounts, startangle = 90, shadow = True, colors = colors)
+    ax.axis("equal")
+    plt.legend(patches, catStrVals, loc="best")
+    plt.savefig(fileName)
+    plt.clf()
+    return fileName
+
 def genericBarGraph(data, form):
     categorical = form.catDropdown.data
     floating = form.fltDropdown.data
-    fileName = "static/{}+{}+bar".format(categorical, floating)
-    exists = os.path.isfile(fileName + ".png")
+    fileName = "static/{}+{}+bar.png".format(categorical, floating)
+    exists = os.path.isfile(fileName)
     if exists:
-        return fileName + ".png"
+        return fileName
     uniqueCategorical = data[categorical].value_counts()
     uniqueList = []
     floatingMedians = []
@@ -89,7 +113,17 @@ def genericBarGraph(data, form):
     fig.set_size_inches(10, 8)
     plt.savefig(fileName)
     plt.clf()
-    return fileName + ".png"
+    return fileName
+    
+def buildHeatmap(data):
+    exists = os.path.isfile("templates/carMap.html")
+    if exists:
+        return
+    data = data[np.isfinite(data["lat"])]
+    carMap = folium.Map(location = [41, -96], zoom_start=4)
+    heatArr = data[["lat", "long"]].as_matrix()
+    carMap.add_child(plugins.HeatMap(heatArr, radius=15))
+    carMap.save("templates/carMap.html")
 
 def scratch():
     from retrieveData import createDataset

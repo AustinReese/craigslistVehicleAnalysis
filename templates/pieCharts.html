@@ -1,16 +1,13 @@
 <!DOCTYPE html> {% extends "base.html" %}
 {% block content %}
 {{ form.csrv_token }}
-<form action="/barGraphs" method=POST>
-	<h2 class="form-login-heading text-center">Build Line Graph</h2>
-	<div class="col-md-2 text-center>"></div>
+<form action="/pieCharts" method=POST>
+	<h2 class="form-login-heading text-center">Build Pie Chart</h2>
+	<div class="col-md-4"></div>
 	<div class="col-md-4 text-center>">
-		{{ wtf.form_field(form.catDropdown) }}
+		{{ wtf.form_field(form.cat) }}
 	</div>
-	<div class="col-md-4 text-center>">
-		{{ wtf.form_field(form.fltDropdown) }}
-	</div>
-	<div class="col-md-2 text-center>"></div>
+	<div class="col-md-4"></div>
 	<div class="col-md-12 text-center">
 		<input class="btn btn-primary" type=submit val=go>
 	</div>
