@@ -15,36 +15,68 @@ data = retrieveData.createDataset()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    return render_template("index.html", msg = None)
 
 @app.route("/barGraphs", methods=["GET", "POST"])
 def barGraphs():
-    form = retrieveData.getBarGraphCriteria()
-    if form.is_submitted():
-        img = buildGraphs.genericBarGraph(data, form)
-        return render_template("barGraphs.html", form = form, img = img)
-    return render_template("barGraphs.html", form = form, img = None)
+    try:
+        form = retrieveData.getBarGraphCriteria()
+        if form.is_submitted():
+            img = buildGraphs.genericBarGraph(data, form)
+            return render_template("barGraphs.html", form = form, img = img)
+        return render_template("barGraphs.html", form = form, img = None)
+    except:
+        return render_template("index.html", msg = "Something went wrong, please try again")        
 
 @app.route("/lineGraphs", methods=["GET", "POST"])
 def lineGraphs():
-    form = retrieveData.getLineGraphCriteria()
-    if form.is_submitted():
-        img = buildGraphs.lineGraphAvg(data, form)
-        return render_template("lineGraphs.html", form = form, img = img)
-    return render_template("lineGraphs.html", form = form, img = None)
+    try:
+        form = retrieveData.getLineGraphCriteria()
+        if form.is_submitted():
+            img = buildGraphs.lineGraphAvg(data, form)
+            return render_template("lineGraphs.html", form = form, img = img)
+        return render_template("lineGraphs.html", form = form, img = None)
+    except:
+        return render_template("index.html", msg = "Something went wrong, please try again")        
 
 @app.route("/pieCharts", methods=["GET", "POST"])
 def pieCharts():
-    form = retrieveData.getPieChartCriteria()
-    if form.is_submitted():
-        img = buildGraphs.pieCharts(data, form)
-        return render_template("pieCharts.html", form = form, img = img)
-    return render_template("pieCharts.html", form = form, img = None)
+    try:
+        form = retrieveData.getPieChartCriteria()
+        if form.is_submitted():
+            img = buildGraphs.pieCharts(data, form)
+            return render_template("pieCharts.html", form = form, img = img)
+        return render_template("pieCharts.html", form = form, img = None)
+    except:
+        return render_template("index.html", msg = "Something went wrong, please try again")        
 
-@app.route("/heatMap")
+@app.route("/heatMaps", methods=["GET", "POST"])
 def heatMap():
-    buildGraphs.buildHeatmap(data)
-    return render_template("carMap.html")
+    try:
+        form = retrieveData.getHeatMapCriteria()
+        cat = form.cat.data
+        firstDrop = False
+        if form.is_submitted():
+            form = retrieveData.getHeatMapCriteria(cat, data)
+            firstDrop = True
+            print("howdy")
+            return render_template("heatMaps.html", form = form, firstDrop = firstDrop)
+        return render_template("heatMaps.html", form = form, firstDrop = firstDrop)
+    except:
+        return render_template("index.html", msg = "Something went wrong, please try again")
+    
+
+@app.route("/renderMap", methods=["GET", "POST"])
+def renderMap():
+    try:
+        form = retrieveData.getHeatMapCriteria()
+        cat = form.cat.data
+        var = form.var.data
+        html = buildGraphs.buildHeatmap(data, cat, var)
+        print(html)
+    except:
+        return render_template("index.html", msg = "Something went wrong, please try again")
+    return html
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,5 +1,10 @@
 <!DOCTYPE html> {% extends "base.html" %}
 {% block content %}
+{% if msg != None %}
+<div class="alert alert-danger text-center" role="alert">
+  {{msg}}
+</div>
+{% endif %}
 <ul>
 	<li>
 		<a href="/barGraphs">Bar Graphs</a>
@@ -11,8 +16,7 @@
 		<a href="/pieCharts">Pie Charts</a>
 	</li>
 	<li>
-		<a href="/heatMap">Heated Map</a>
+		<a href="/heatMaps">Heated Map</a>
 	</li>
-
 </ul>
 {% endblock %}

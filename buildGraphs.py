@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import os.path
 import folium
 import operator
+import time
 from folium import plugins
 from flask import make_response
 from retrieveData import createDataset
@@ -115,15 +116,20 @@ def genericBarGraph(data, form):
     plt.clf()
     return fileName
     
-def buildHeatmap(data):
-    exists = os.path.isfile("templates/carMap.html")
-    if exists:
-        return
-    data = data[np.isfinite(data["lat"])]
+def buildHeatmap(data, cat, var):
+    if cat != "year" and cat != "odometer" and cat != "price":
+        uniqueData = data.loc[data[cat] == var]
+    else:
+        var = var.split("-")
+        varLow = int(var[0])
+        varHigh = int(var[1])
+        uniqueData = data[(data[cat] >= varLow) & (data[cat] <= varHigh)]
+    uniqueData = uniqueData[np.isfinite(uniqueData["lat"])]
     carMap = folium.Map(location = [41, -96], zoom_start=4)
-    heatArr = data[["lat", "long"]].as_matrix()
+    heatArr = uniqueData[["lat", "long"]].as_matrix()
     carMap.add_child(plugins.HeatMap(heatArr, radius=15))
-    carMap.save("templates/carMap.html")
+    html = carMap.get_root().render()
+    return html
 
 def scratch():
     from retrieveData import createDataset

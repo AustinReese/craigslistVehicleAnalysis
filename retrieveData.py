@@ -2,7 +2,7 @@ import os.path
 import pandas as pd
 import numpy as np
 from flask_wtf import FlaskForm
-from wtforms import Form, SelectField, validators
+from wtforms import Form, SelectField, validators, StringField
 from wtforms.validators import Length, ValidationError, DataRequired
 
 categorical = [
@@ -57,3 +57,34 @@ class getPieChartCriteria(FlaskForm):
         ctg.append((i, i.title()))
     
     cat = SelectField("Category", choices = ctg)
+
+def getHeatMapCriteria(selectedCat = None, data = None):
+    class HeatMap(FlaskForm):
+        pass
+    
+    valList = []
+    if selectedCat == None:
+        ctg = []
+        for i in categorical:
+            ctg.append((i, i.title()))
+        for i in floaters:
+            if i not in ctg:
+                ctg.append((i, i.title()))
+        
+        cat = SelectField("Category", choices = ctg)
+        
+        var = SelectField("Category", choices = valList)
+    else:
+        cat = SelectField("Category", choices = [(selectedCat, selectedCat.title())])        
+        if selectedCat != "year" and selectedCat != "odometer" and selectedCat != "price":
+            vals = data[selectedCat].value_counts()
+            for i in vals.iteritems():
+                valList.append((i[0], i[0].title()))
+            var = SelectField("Variable", choices = valList)
+        else:
+            var = StringField("Between values (enter as follows: x-y)")
+    setattr(HeatMap, "cat", cat)
+    setattr(HeatMap, "var", var)
+    return HeatMap()
+        
+        
