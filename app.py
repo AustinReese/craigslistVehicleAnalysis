@@ -11,7 +11,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "CraigsistCars+TrucksVisualization"
 bootstrap = Bootstrap(app)
 
-data = retrieveData.createDataset()
+DATASET_NAME = "craigslistVehiclesFull.csv"
+
+DATA = retrieveData.createDataset(DATASET_NAME)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -22,33 +24,33 @@ def barGraphs():
     try:
         form = retrieveData.getBarGraphCriteria()
         if form.is_submitted():
-            img = buildGraphs.genericBarGraph(data, form)
+            img = buildGraphs.genericBarGraph(DATA, form)
             return render_template("barGraphs.html", form = form, img = img)
         return render_template("barGraphs.html", form = form, img = None)
-    except:
-        return render_template("index.html", msg = "Something went wrong, please try again")        
+    except Exception as e:
+        return render_template("index.html", msg = f"Something went wrong, please try again: {e}")        
 
 @app.route("/lineGraphs", methods=["GET", "POST"])
 def lineGraphs():
     try:
         form = retrieveData.getLineGraphCriteria()
         if form.is_submitted():
-            img = buildGraphs.lineGraphAvg(data, form)
+            img = buildGraphs.lineGraphAvg(DATA, form)
             return render_template("lineGraphs.html", form = form, img = img)
         return render_template("lineGraphs.html", form = form, img = None)
-    except:
-        return render_template("index.html", msg = "Something went wrong, please try again")        
+    except Exception as e:
+        return render_template("index.html", msg = f"Something went wrong, please try again: {e}")        
 
 @app.route("/pieCharts", methods=["GET", "POST"])
 def pieCharts():
     try:
         form = retrieveData.getPieChartCriteria()
         if form.is_submitted():
-            img = buildGraphs.pieCharts(data, form)
+            img = buildGraphs.pieCharts(DATA, form)
             return render_template("pieCharts.html", form = form, img = img)
         return render_template("pieCharts.html", form = form, img = None)
-    except:
-        return render_template("index.html", msg = "Something went wrong, please try again")        
+    except Exception as e:
+        return render_template("index.html", msg = f"Something went wrong, please try again: {e}")        
 
 @app.route("/heatMaps", methods=["GET", "POST"])
 def heatMap():
@@ -57,13 +59,12 @@ def heatMap():
         cat = form.cat.data
         firstDrop = False
         if form.is_submitted():
-            form = retrieveData.getHeatMapCriteria(cat, data)
+            form = retrieveData.getHeatMapCriteria(cat, DATA)            
             firstDrop = True
-            print("howdy")
             return render_template("heatMaps.html", form = form, firstDrop = firstDrop)
         return render_template("heatMaps.html", form = form, firstDrop = firstDrop)
-    except:
-        return render_template("index.html", msg = "Something went wrong, please try again")
+    except Exception as e:
+        return render_template("index.html", msg = f"Something went wrong, please try again: {e}")
     
 
 @app.route("/renderMap", methods=["GET", "POST"])
@@ -72,10 +73,9 @@ def renderMap():
         form = retrieveData.getHeatMapCriteria()
         cat = form.cat.data
         var = form.var.data
-        html = buildGraphs.buildHeatmap(data, cat, var)
-        print(html)
-    except:
-        return render_template("index.html", msg = "Something went wrong, please try again")
+        html = buildGraphs.buildHeatmap(DATA, cat, var)
+    except Exception as e:
+        return render_template("index.html", msg = f"Something went wrong, please try again: {e}")
     return html
 
 if __name__ == "__main__":

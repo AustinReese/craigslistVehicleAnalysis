@@ -1,6 +1,7 @@
 import os.path
 import pandas as pd
 import numpy as np
+import buildGraphs
 from flask_wtf import FlaskForm
 from wtforms import Form, SelectField, validators, StringField
 from wtforms.validators import Length, ValidationError, DataRequired
@@ -14,11 +15,11 @@ floaters = [
     "price", "year", "odometer"
 ]
 
-def createDataset():
-    exists = os.path.isfile("craigslistVehicles.csv")
+def createDataset(fileName):
+    exists = os.path.isfile(fileName)
     if not exists:
         return None
-    data = pd.read_csv("craigslistVehicles.csv")
+    data = pd.read_csv(fileName)
     return cleanData(data)
     
 def cleanData(data):
@@ -64,13 +65,13 @@ def getHeatMapCriteria(selectedCat = None, data = None):
     
     valList = []
     if selectedCat == None:
-        ctg = []
+        ctg = []        
         for i in categorical:
             ctg.append((i, i.title()))
         for i in floaters:
             if i not in ctg:
                 ctg.append((i, i.title()))
-        
+                
         cat = SelectField("Category", choices = ctg)
         
         var = SelectField("Category", choices = valList)

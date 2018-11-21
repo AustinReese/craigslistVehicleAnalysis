@@ -76,7 +76,6 @@ def pieCharts(data, form):
               "mediumseagreen", "mediumaquamarine", "turquoise", "deepskyblue", "dodgerblue",
               "royalblue", "darkblue", "mediumpurple", "darkviolet", "purple", "mediumvioletred",
               "crimson"])
-    print("we go")
     patches, texts = ax.pie(catCounts, startangle = 90, shadow = True, colors = colors)
     ax.axis("equal")
     plt.legend(patches, catStrVals, loc="best")
@@ -124,6 +123,7 @@ def buildHeatmap(data, cat, var):
         varLow = int(var[0])
         varHigh = int(var[1])
         uniqueData = data[(data[cat] >= varLow) & (data[cat] <= varHigh)]
+    uniqueData = uniqueData[(uniqueData["state_name"] != "FAILED")]
     uniqueData = uniqueData[np.isfinite(uniqueData["lat"])]
     carMap = folium.Map(location = [41, -96], zoom_start=4)
     heatArr = uniqueData[["lat", "long"]].as_matrix()
