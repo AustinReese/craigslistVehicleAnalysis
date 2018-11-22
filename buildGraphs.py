@@ -20,9 +20,9 @@ def lineGraphAvg(data, form):
     exists = os.path.isfile(fileName)
     if exists:
         return fileName
-    if x != "year":
+    if x != "year" and y != "weather":
         data[x] = data[x].round(decimals=-3)
-    if y != "year":
+    if y != "year" and y != "weather":
         data[y] = data[y].round(decimals=-3)
     medianY = data.groupby(x)[y].median()
     medianYRolling = medianY.rolling(25).mean()
@@ -101,7 +101,7 @@ def genericBarGraph(data, form):
         uniqueList.append(i[0])
         floatingMedians.append(i[1])
     plt.bar(uniqueList, floatingMedians)
-    if categorical == "manufacturer" or categorical == "type":
+    if categorical == "manufacturer" or categorical == "type" or categorical == "state_name":
         plt.xticks(rotation=90)
     if floating == "year":
         axes = plt.gca()

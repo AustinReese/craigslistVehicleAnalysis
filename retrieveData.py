@@ -8,11 +8,12 @@ from wtforms.validators import Length, ValidationError, DataRequired
 
 categorical = [
     "manufacturer", "condition", "cylinders", "fuel", "year",
-    "title_status", "transmission", "drive", "size", "type", "paint_color"
+    "title_status", "transmission", "drive", "size", "type", "paint_color",
+    "state_name"
 ]   
 
 floaters = [
-    "price", "year", "odometer"
+    "price", "year", "odometer", "weather"
 ]
 
 def createDataset(fileName):
@@ -26,6 +27,7 @@ def cleanData(data):
     data.price = data.price[~((data.price-data.price.mean()).abs() > .05*data.price.std())]
     data.odometer = data.odometer[~((data.odometer-data.odometer.mean()).abs() > 3*data.odometer.std())]
     data.year = data.year[~((data.year-data.year.mean()).abs() > 10*data.year.std())]
+    data.state_name = data.state_name.replace({"FAILED": ""})
     return data
 
 class getBarGraphCriteria(FlaskForm):
@@ -47,7 +49,8 @@ class getLineGraphCriteria(FlaskForm):
     for i in categorical:
         ctg.append((i, i.title()))
     for i in floaters:
-        flt.append((i, i.title()))
+        if i != "weather":
+            flt.append((i, i.title()))
     cat = SelectField("Category", choices = ctg)
     fltOne = SelectField("X Axis", choices = flt)
     fltTwo = SelectField("Y Axis", choices = flt)
