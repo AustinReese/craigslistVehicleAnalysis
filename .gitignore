@@ -3,3 +3,4 @@
 templates/carMap.html
 static/*.png
 __pycache__/*
+reduceSize.py

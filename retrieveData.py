@@ -1,7 +1,7 @@
-import os.path
 import pandas as pd
 import numpy as np
 import buildGraphs
+from random import sample
 from flask_wtf import FlaskForm
 from wtforms import Form, SelectField, validators, StringField
 from wtforms.validators import Length, ValidationError, DataRequired
@@ -16,11 +16,11 @@ floaters = [
     "price", "year", "odometer", "weather"
 ]
 
+
 def createDataset(fileName):
-    exists = os.path.isfile(fileName)
-    if not exists:
-        return None
-    data = pd.read_csv(fileName)
+    
+    skip = sorted(sample(range(2000000), 50000))
+    data = pd.read_csv(fileName, skiprows = skip)
     return cleanData(data)
     
 def cleanData(data):

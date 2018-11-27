@@ -10,7 +10,6 @@ import operator
 import time
 from folium import plugins
 from flask import make_response
-from retrieveData import createDataset
 
 def lineGraphAvg(data, form):
     x = form.fltOne.data
@@ -130,10 +129,3 @@ def buildHeatmap(data, cat, var):
     carMap.add_child(plugins.HeatMap(heatArr, radius=15))
     html = carMap.get_root().render()
     return html
-
-def scratch():
-    from retrieveData import createDataset
-    data = createDataset()
-    import seaborn as sns
-    sns.set(style="whitegrid")
-    ax = sns.violinplot(x=data.price)

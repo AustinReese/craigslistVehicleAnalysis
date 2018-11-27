@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "CraigsistCars+TrucksVisualization"
 bootstrap = Bootstrap(app)
 
-DATASET_NAME = "craigslistVehiclesFull.csv"
+DATASET_NAME = "craigslistVehiclesReduced.csv"
 
 DATA = retrieveData.createDataset(DATASET_NAME)
 
@@ -77,6 +77,11 @@ def renderMap():
     except Exception as e:
         return render_template("index.html", msg = f"Something went wrong, please try again: {e}")
     return html
+
+@app.route("/drawMap", methods=["GET"])
+def drawMap():
+    return redirect("https://plot.ly/~reesau01/0/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
