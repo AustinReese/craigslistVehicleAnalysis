@@ -78,9 +78,13 @@ def renderMap():
         return render_template("index.html", msg = f"Something went wrong, please try again: {e}")
     return html
 
-@app.route("/drawMap", methods=["GET"])
-def drawMap():
+@app.route("/countMap", methods=["GET"])
+def countMap():
     return redirect("https://plot.ly/~reesau01/0/")
+
+@app.route("/priceMap", methods=["GET"])
+def priceMap():
+    return redirect("https://plot.ly/~reesau01/4/")
 
 
 if __name__ == "__main__":
