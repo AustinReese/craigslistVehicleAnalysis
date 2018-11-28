@@ -115,7 +115,7 @@ def genericBarGraph(data, form):
     return fileName
     
 def buildHeatmap(data, cat, var):
-    if cat != "year" and cat != "odometer" and cat != "price":
+    if cat != "year" and cat != "odometer" and cat != "price" and cat != "weather":
         uniqueData = data.loc[data[cat] == var]
     else:
         var = var.split("-")

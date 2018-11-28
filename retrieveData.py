@@ -27,7 +27,7 @@ def cleanData(data):
     data.price = data.price[~((data.price-data.price.mean()).abs() > .05*data.price.std())]
     data.odometer = data.odometer[~((data.odometer-data.odometer.mean()).abs() > 3*data.odometer.std())]
     data.year = data.year[~((data.year-data.year.mean()).abs() > 10*data.year.std())]
-    data.state_name = data.state_name.replace({"FAILED": ""})
+    data.state_name = data.state_name.replace({"FAILED": "Outside United States"})
     return data
 
 class getBarGraphCriteria(FlaskForm):
@@ -80,10 +80,11 @@ def getHeatMapCriteria(selectedCat = None, data = None):
         var = SelectField("Category", choices = valList)
     else:
         cat = SelectField("Category", choices = [(selectedCat, selectedCat.title())])        
-        if selectedCat != "year" and selectedCat != "odometer" and selectedCat != "price":
+        if selectedCat != "year" and selectedCat != "odometer" and selectedCat != "price" and selectedCat != "weather":
             vals = data[selectedCat].value_counts()
             for i in vals.iteritems():
-                valList.append((i[0], i[0].title()))
+                if i[0]:
+                    valList.append((i[0], i[0].title()))
             var = SelectField("Variable", choices = valList)
         else:
             var = StringField("Between values (enter as follows: x-y)")

@@ -80,7 +80,7 @@ def renderMap():
 
 @app.route("/countMap", methods=["GET"])
 def countMap():
-    return redirect("https://plot.ly/~reesau01/0/")
+    return redirect("https://plot.ly/~reesau01/2/")
 
 @app.route("/priceMap", methods=["GET"])
 def priceMap():
