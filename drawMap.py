@@ -33,6 +33,7 @@ def drawMeanMap(data):
     countyMeans = data.groupby(by = "county_fips", as_index = False)["price"].mean()
     
     fips = countyMeans.county_fips.astype("int").tolist()
+
     avgPrices = countyMeans.price.fillna(0).astype("int").tolist()
     
     reducedPrices = []
@@ -53,6 +54,7 @@ def drawMeanMap(data):
 def main():
     data = createDataset(FILE_NAME)
     drawCountsMap(data)
+    drawMeanMap(data)
     
 if __name__ == "__main__":
     main()

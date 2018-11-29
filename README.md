@@ -44,8 +44,14 @@ craigslistVehicles.csv contains the following columns:
 
 * Image URL (unique)
 
+* State (categorical)
+
+* County (categorical)
+
+* Average Location Temperature (integer)
+
 Users are not required to fill out every possible category when listing their vehicle, so this dataset contains holes in every column except for Listing URL, Craigslist Region and Price. Year contains a negligible amount of blank entries (less than .01%)
 
 ## Contributors
 
-Designed by Ahmad Osman and Austin Reese
+Designed by Ahmad Osman, Austin Reese, and Simon Parris
