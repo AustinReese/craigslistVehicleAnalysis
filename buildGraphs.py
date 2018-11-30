@@ -129,3 +129,45 @@ def buildHeatmap(data, cat, var):
     carMap.add_child(plugins.HeatMap(heatArr, radius=15))
     html = carMap.get_root().render()
     return html
+
+
+def buildQuantileFrame(data, x, y, cat):
+    
+    xQuantiles = [0]
+    quantileData = {}
+    percentileHTML = []
+    allData = False
+    if cat != "No Category":
+        catVals = data[cat].value_counts()
+        varList = []
+        for i in catVals.iteritems():
+            varList.append(i[0])
+    else:
+        varList = ["All Categories"]
+        allData = True
+        
+    for var in varList:
+        
+        if allData == False:
+            catData = data[data[cat].values == var]
+        else:
+            catData = data
+        
+        for i in range(10):
+            xQuantiles.append(catData[x].quantile((i+1)/10))
+            
+        for i in range(10):
+            xQuantilesFrame = catData[catData[x].between(xQuantiles[i], xQuantiles[i+1])]
+            yQuantiles = [0]
+            yMeans = []
+            for j in range(10):
+                yQuantiles.append(xQuantilesFrame[y].quantile((j+1)/10))
+            for j in range(10):
+                yQuantilesFrame = xQuantilesFrame[xQuantilesFrame[y].between(yQuantiles[j], yQuantiles[j+1])]
+                yMean = yQuantilesFrame[y].mean()
+                yMeans.append(int(yMean))
+            quantileData["{}-{}".format(round(xQuantiles[i]), round(xQuantiles[i+1]))] = yMeans
+        percentileHTML.append([var, pd.DataFrame(quantileData).to_html()])
+        
+    return percentileHTML
+
