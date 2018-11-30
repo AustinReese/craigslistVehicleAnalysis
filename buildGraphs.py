@@ -165,7 +165,10 @@ def buildQuantileFrame(data, x, y, cat):
             for j in range(10):
                 yQuantilesFrame = xQuantilesFrame[xQuantilesFrame[y].between(yQuantiles[j], yQuantiles[j+1])]
                 yMean = yQuantilesFrame[y].mean()
-                yMeans.append(int(yMean))
+                try:
+                    yMeans.append(int(yMean))
+                except:
+                    yMeans.append("No Info")
             quantileData["{}-{}".format(round(xQuantiles[i]), round(xQuantiles[i+1]))] = yMeans
         percentileHTML.append([var, pd.DataFrame(quantileData).to_html()])
         
