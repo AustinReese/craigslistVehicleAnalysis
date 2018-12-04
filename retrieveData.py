@@ -77,7 +77,7 @@ def getHeatMapCriteria(selectedCat = None, data = None):
                 
         cat = SelectField("Category", choices = ctg)
         
-        var = SelectField("Category", choices = valList)
+        var = SelectField("Variable", choices = valList)
     else:
         cat = SelectField("Category", choices = [(selectedCat, selectedCat.title())])        
         if selectedCat != "year" and selectedCat != "odometer" and selectedCat != "price" and selectedCat != "weather":
@@ -91,5 +91,17 @@ def getHeatMapCriteria(selectedCat = None, data = None):
     setattr(HeatMap, "cat", cat)
     setattr(HeatMap, "var", var)
     return HeatMap()
+
+class getQuantilesCriteria(FlaskForm):
+    nums = []
+    for i in floaters:
+        nums.append((i, i.title()))
+    cats = [("No Category", "No Category")]
+    for i in categorical:
+        if i != "year":
+            cats.append((i, i.title()))
+    x = SelectField("Group By Percentile", choices = nums)
+    y = SelectField("Means Of", choices = nums)
+    cat = SelectField("Category", choices = cats)
         
         

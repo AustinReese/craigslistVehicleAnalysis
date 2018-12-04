@@ -15,6 +15,7 @@ DATASET_NAME = "craigslistVehiclesReduced.csv"
 
 DATA = retrieveData.createDataset(DATASET_NAME)
 
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html", msg = None)
@@ -86,6 +87,20 @@ def countMap():
 def priceMap():
     return redirect("https://plot.ly/~reesau01/4/")
 
+@app.route("/quantiles", methods=["GET", "POST"])
+def quantiles():
+    #try:
+        form = retrieveData.getQuantilesCriteria()
+        if form.is_submitted():
+            x = form.x.data
+            y = form.y.data
+            cat = form.cat.data
+            htmlList = buildGraphs.buildQuantileFrame(DATA, x, y, cat)
+            return render_template("quantiles.html", form = form, htmlList = htmlList, x = x, y = y)        
+        return render_template("quantiles.html", form = form, text = None)
+    #except Exception as e:
+        #return render_template("index.html", msg = f"Something went wrong, please try again: {e}")
+        
 
 if __name__ == "__main__":
     app.run(debug=True)
